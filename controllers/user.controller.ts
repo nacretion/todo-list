@@ -1,4 +1,4 @@
-import User from "../Types/User"
+import User from "../Utils/User"
 import {Request, Response} from "express";
 
 export class UserController {
@@ -7,6 +7,10 @@ export class UserController {
             let {login, password, first_name, last_name, second_name} = request.body
 
             if (login && password && first_name && last_name && second_name) {
+                login = login.toLowerCase()
+                first_name = first_name.toLowerCase()
+                last_name = last_name.toLowerCase()
+                second_name = second_name.toLowerCase()
                 const user = await User.create(login, password, first_name, last_name, second_name)
 
 
@@ -34,6 +38,7 @@ export class UserController {
             let {login, password} = request.body
 
             if (login && password) {
+                login = login.toLowerCase()
                 const user = await User.authenticateUser(login, password)
 
                 if (user === 404) {
@@ -61,6 +66,19 @@ export class UserController {
         }
     }
 
+    async getAll(request: Request, result: Response) {
+        try {
+            const users = await User.getAll()
+            if (users) {
+                result.status(200).json(users)
+            } else {
+                result.status(404).json("not found")
+            }
+        } catch (e) {
+            result.status(500).json({message: "Something went wrong. Try again"})
+        }
+    }
+
     async getAbbreviatedNameById(request: Request, result: Response) {
         try {
             let {id} = request.query as { id: string }
@@ -69,13 +87,29 @@ export class UserController {
 
                 const name = await User.getAbbreviatedNameById(parseInt(id))
 
-                result.status(200).json({abbreviatedName: name})
+                result.status(200).json({name})
             }
 
 
             // result.status(400).json({message: "Blank fields"})
         } catch (e: any) {
-            result.status(500).json({message: e.message})
+            result.status(500).json({message: "Something went wrong. Try again"})
+        }
+    }
+
+    async verifyToken(request: Request, result: Response) {
+        try {
+            const token = request.headers.authorization
+            if (token) {
+                const isValid = await User.verifyToken(token)
+                return isValid ?
+                     result.status(200).json("ok")
+                    : result.status(400).json("false")
+
+            }
+
+        } catch (e) {
+            result.status(500).json({message: "Something went wrong. Try again"})
         }
     }
 }
