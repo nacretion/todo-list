@@ -1,7 +1,6 @@
-import {useContext, useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import { AuthContext } from './AuthContext';
 import {getSlavesByBossId} from "../utils/UserUtils";
-import {set} from "date-fns";
 
 const AuthProvider = ({ children }) => {
     const [login, setUsername] = useState('');

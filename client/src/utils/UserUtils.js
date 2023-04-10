@@ -53,7 +53,7 @@ export const loginUser = async (login, password) => {
 
 export const getSlavesByBossId = async (id) => {
 
-    const response = await fetch('http://localhost:5000/user/slaves?chief_id=' + id)
+    const response = await fetch('https://api.nacretion.space/user/slaves?chief_id=' + id)
 
     const data = response.json()
     if (response.ok) {
