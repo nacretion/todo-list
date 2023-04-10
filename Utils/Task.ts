@@ -54,23 +54,35 @@ export default class Task {
 
         if (result.rows[0]) {
             // TODO: why do we need id ?
-            // const id =  result.rows[0].id
+            const id =  result.rows[0].id
             const createDate =  result.rows[0].create_date
             const updDate =  result.rows[0].upd_date
-            return new Task(data.heading, data.description, data.endDate, createDate, updDate,  data.priority, data.status, data.creatorId, data.responsibleId)
+            return new Task(data.heading, data.description, data.endDate, createDate, updDate,  data.priority, data.status, data.creatorId, data.responsibleId, id)
         }
     }
 
-    async updateTask(updFields: updFields) {
-        // TODO: write updateTask()
-        if (!updFields) {
-            return undefined
+    static async updateTask(updTask: Partial<TaskType>): Promise<TaskType | undefined> {
+        const oldTask = await Database.query("SELECT * FROM task WHERE id = $1", [updTask.id]);
+
+
+        console.log(updTask.endDate)
+        if (oldTask.rows[0]) {
+            const task = oldTask.rows[0] as TaskType;
+            const newTask = { ...task, ...updTask} as TaskType;
+
+            const query =`UPDATE task SET heading = $1, description = $2, end_date = $3, priority = $4, status = $5, responsible_id = $6 WHERE id = $7 RETURNING *`
+
+
+            const result = await Database.query(query, [newTask.heading, newTask.description, newTask.endDate, newTask.priority, newTask.status, newTask.responsibleId, updTask.id]);
+
+            if (result.rows[0]) {
+                return result.rows[0] as TaskType;
+            }
         }
 
-        // const updDate =  Date.now()
-
-
+        return undefined;
     }
+
 
     async getById(id: number) {
         const result = await Database.query("SELECT * FROM task where id = $1", [id])

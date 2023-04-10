@@ -8,5 +8,6 @@ router.post('/create', taskController.createTask);
 
 router.get('/byrespid', taskController.getTasksByResponsibleId);
 router.get('/bycreatorid', taskController.getTasksByCreatorId);
+router.post('/update', taskController.updateTask);
 
 export default router;

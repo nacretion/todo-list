@@ -16,7 +16,7 @@ export class TaskController {
 
         } catch (e: any) {
 
-            result.status(500).json({message: e.message})
+            result.status(500).json({message: "Something went wrong. Try again"})
         }
     }
 
@@ -33,7 +33,7 @@ export class TaskController {
             return result.status(200).json(tasks)
         } catch (e: any) {
 
-            result.status(500).json({message: e.message})
+            result.status(500).json({message: "Something went wrong. Try again"})
         }
     }
     async getTasksByCreatorId(request: Request, result: Response) {
@@ -49,7 +49,26 @@ export class TaskController {
             return result.status(200).json(tasks)
         } catch (e: any) {
 
-            result.status(500).json({message: e.message})
+            result.status(500).json({message: "Something went wrong. Try again"})
+        }
+    }
+    async updateTask(request: Request, result: Response) {
+        try {
+            const {task} = request.body
+
+            console.log(task)
+            const updatedTask = await Task.updateTask(task)
+
+            if (updatedTask) {
+                return result.status(200).json(updatedTask)
+            } else {
+                return result.status(500).json("Something went wrong. Try again")
+            }
+
+        } catch (e: any) {
+
+            console.log(e.message)
+            result.status(500).json({message: "Something went wrong. Try again"})
         }
     }
 }

@@ -93,9 +93,10 @@ const ModalTask = ({task, active, setActive}) => {
                     <div className={classes.row}>
                         {userId === creator_id ?
                             <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
-                            :<br/>
+                            :
+                            <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
                         }
-                        <Button>Принять</Button>
+                        <Button func={() => setActive(!active)}>Принять</Button>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@ import {getAbbreviated} from "../../../utils/UserUtils";
 import Button from "../button/Button";
 import Modal from "./Modal";
 import classes from "./ModalTask.module.scss"
-import {getStatus} from "../../../utils/TaskUtils";
+import {getStatus, updateTask} from "../../../utils/TaskUtils";
 import Input from "../input/Input";
 import TimeInput from "../input/timeInput";
 import Switch from "../switch/Switch";
@@ -59,7 +59,6 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
     const statusString = getStatus(status)
 
 
-    console.log(slavesArray)
     const formatDate = () => {
         const date = new Date(endDate);
         const year = date.getFullYear();
@@ -81,9 +80,34 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
     const getSlaves = () => {
         let res = [];
         slaves.map(async (slave) => {
-            res.push({id: slaves.indexOf(slave), text: (await getAbbreviated(slave.subordinate_id)).name})
+            const id = slave.subordinate_id
+            res.push({id: slaves.indexOf(slave), init_id: id, text: (await getAbbreviated(id)).name})
         })
         setSlavesArray(res)
+    }
+
+    const [updatedTask, setUpdatedTask] = useState()
+
+    const collectUpdates = () => {
+        const end_date = (new Date(fomattedDate + " " + updTime))
+        return {
+            id: task.id,
+            heading: heading,
+            description: description,
+            endDate: end_date,
+            priority: priority,
+            status: status,
+            responsibleId: slavesArray[selectedSlave].init_id
+        }
+    }
+
+
+    const handleEdit = () => {
+        updateTask(collectUpdates()).then(r => {
+            if (r.id) {
+                window.location.reload()
+            }
+        })
     }
 
     return (
@@ -108,7 +132,6 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
                     </div>
                     <div className={classes.row}>
                         <span>Ответственный</span>
-                        {/* TODO: add <Select/> component */}
                         <Switch
                             options={slavesArray}
                             selectedValue={selectedSlave}
@@ -138,7 +161,7 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
                     />
                     <div className={classes.row}>
                         <Button func={()=> setEditMode(!editMode)}>Отменить</Button>
-                        <Button>Принять</Button>
+                        <Button func={()=> handleEdit()}>Принять</Button>
                     </div>
                 </div>
             </div>
