@@ -100,6 +100,7 @@ const TaskWrapper = ({loading, tasks, grouping}) => {
             case 1: {
                 return (
                     groupByResponsible.map((resp) => {
+
                         return (
                             <>
                                 <p>{resp.name}</p>

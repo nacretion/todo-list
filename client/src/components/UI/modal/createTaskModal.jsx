@@ -23,8 +23,6 @@ const CreateTaskModal = ({task, active, setActive}) => {
 
     const {slaves} = useContext(AuthContext)
 
-    console.log(responsible)
-    console.log(createDate)
     const [slavesArray, setSlavesArray] = useState([])
     const [selectedSlave, setSelectedSlave] = useState(0)
 
@@ -93,7 +91,7 @@ const CreateTaskModal = ({task, active, setActive}) => {
             init_id: slaves[index].subordinate_id,
             text: result.name,
         }));
-        setSlavesArray([{ id: slaves.length, init_id: id, text: "Текущий пользователь" }, ...slaveArray]);
+        setSlavesArray([...slaveArray]);
     };
 
 
