@@ -45,6 +45,7 @@ export default class Task {
     ) {
 
         let endDate = new Date(data.endDate)
+
         console.log(endDate.getTime())
         const result = await Database.query(
             "INSERT INTO task (heading, description, end_date, priority, status, creator_id, responsible_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",

@@ -120,4 +120,37 @@ export default class User {
             return false;
         }
     }
+
+    static async createSlave(chiefId: number, slaveId: number) : Promise<object | false> {
+        try {
+            const result = await Database.query(
+                "INSERT INTO responsible_rel (chief_id, subordinate_id) values ($1, $2) returning *",
+                [chiefId, slaveId]
+            );
+
+            if (result) {
+                return result.rows
+            }
+            return false
+        } catch (error) {
+            return false;
+        }
+
+    }
+    static async getSlaves(chiefId: number) : Promise<object | false> {
+        try {
+            const result = await Database.query(
+                "SELECT * FROM responsible_rel where chief_id = $1",
+                [chiefId]
+            );
+
+            if (result) {
+                return result.rows
+            }
+            return false
+        } catch (error) {
+            return false;
+        }
+
+    }
 }

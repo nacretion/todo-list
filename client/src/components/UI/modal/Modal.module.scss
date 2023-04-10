@@ -1,0 +1,29 @@
+.Modal {
+  left: 0;
+  top: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 100vw;
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+
+  background: #00000080;
+  z-index: 5;
+}
+
+.ModalContent {
+  width: 60vw;
+  height: 70vh;
+  min-height: fit-content;
+
+  background: rgba(29, 29, 29, 0.97);
+  border: 1px solid #AF49FF;
+  padding: 30px 40px;
+}
+
+.inactive {
+  display: none;
+}

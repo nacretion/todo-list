@@ -1,0 +1,32 @@
+.Switch {
+  position: relative;
+  width: 120px;
+  border: none;
+  height: 50px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.Switch select {
+  background-color: black;
+}
+
+.Switch option {
+  font-size: 14px;
+  $opacity: 0.5;
+  background-color: black;
+  color: #AF49FF;
+  opacity: 0.8;
+  transition: opacity 1s ease-in-out;
+}
+
+.Switch option:hover {
+  opacity: 1;
+}
+
+.Switch option:checked {
+  background-color: #AF49FF;
+  color: white;
+  opacity: 1;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}

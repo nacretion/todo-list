@@ -112,4 +112,43 @@ export class UserController {
             result.status(500).json({message: "Something went wrong. Try again"})
         }
     }
+    async newSlave(request: Request, result: Response) {
+        try {
+            const {chief_id, slave_id} = request.body
+
+            if (chief_id && slave_id) {
+
+                const slave = await User.createSlave(chief_id, slave_id)
+                return slave ?
+                    result.status(200).json(slave)
+                    : result.status(400).json(false)
+
+            } else {
+                return result.status(404).json("blank fields")
+            }
+
+        } catch (e) {
+            result.status(500).json({message: "Something went wrong. Try again"})
+        }
+
+    }
+    async getSlaves(request: Request, result: Response) {
+        try {
+            const {chief_id} = request.query as {chief_id: string}
+
+            if (chief_id) {
+                const slaves = await User.getSlaves(parseInt(chief_id))
+                return slaves ?
+                    result.status(200).json(slaves)
+                    : result.status(404).json(false)
+
+            } else {
+                return result.status(400).json("blank fields")
+            }
+
+        } catch (e) {
+            result.status(500).json({message: "Something went wrong. Try again"})
+        }
+
+    }
 }

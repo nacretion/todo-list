@@ -11,5 +11,7 @@ router.post('/login', userController.authUser);
 router.post('/verify', userController.verifyToken);
 router.get('/name', userController.getAbbreviatedNameById);
 router.get('/all', userController.getAll);
+router.post('/newSlave', userController.newSlave);
+router.get('/slaves', userController.getSlaves);
 
 export default router;

@@ -42,8 +42,23 @@ export const loginUser = async (login, password) => {
 
     const data = await response.json();
 
+
+    console.log(data)
     if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user_id', data.user.id);
         return true
     }
+}
+
+export const getSlavesByBossId = async (id) => {
+
+    const response = await fetch('http://localhost:5000/user/slaves?chief_id=' + id)
+
+    const data = response.json()
+    if (response.ok) {
+        return data
+    }
+    else return undefined
+
 }

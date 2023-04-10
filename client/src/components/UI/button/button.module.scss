@@ -5,6 +5,7 @@ button {
   align-items: center;
   border: 1px solid rgba(175, 73, 255, 0.4);
   transition: all 500ms;
+  padding: 10px 20px;
 
   background: transparent;
   &:hover {
@@ -13,22 +14,27 @@ button {
   &:focus {
     background: rgba(175, 73, 255, 0.2);
   }
+  cursor: pointer;
 }
 .button {
 
   font-weight: 500;
-  font-size: 31px;
-  line-height: 38px;
-  width: 212px;
-  height: 50px;
+  font-size: 20px;
+  width: fit-content;
+  height: 40px;
 }
 
 .buttonLarge {
 
+  font-weight: 500;
+  font-size: 31px;
+  line-height: 38px;
+  width: fit-content;
+  height: 50px;
 }
 
 .buttonSmall {
-  width: 120px;
+  width: fit-content;
   height: 30px;
-  font-size: 10px;
+  font-size: 12px;
 }
