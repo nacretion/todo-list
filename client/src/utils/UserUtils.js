@@ -5,7 +5,7 @@ export const checkToken = async () => {
         return false
     }
 
-    const result = await fetch("http://localhost:5000/user/verify", {
+    const result = await fetch("https://api.nacretion.space/user/verify", {
         method: 'POST',
         headers: {
             'Authorization': token
@@ -22,7 +22,7 @@ export const checkToken = async () => {
 export const getAbbreviated = async (id) => {
 
     if (id) {
-        const result = await fetch("http://localhost:5000/user/name?id=" + id);
+        const result = await fetch("https://api.nacretion.space/user/name?id=" + id);
 
         const data = result.json()
         if (result.ok) {
@@ -32,7 +32,7 @@ export const getAbbreviated = async (id) => {
 }
 
 export const loginUser = async (login, password) => {
-    const response = await fetch('http://localhost:5000/user/login', {
+    const response = await fetch('https://api.nacretion.space/user/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

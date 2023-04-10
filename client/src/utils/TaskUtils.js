@@ -1,6 +1,6 @@
 export const getTasksByResponsibleId = async (id) => {
     if (id) {
-        const response = await fetch('http://localhost:5000/task/byrespid?id=' + id);
+        const response = await fetch('https://api.nacretion.space/task/byrespid?id=' + id);
 
         const data = await response.json();
 
@@ -20,7 +20,7 @@ export const getStatus = (status) => {
 }
 
 export const updateTask = async (task) => {
-    const response = await fetch('http://localhost:5000/task/update', {
+    const response = await fetch('https://api.nacretion.space/task/update', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
