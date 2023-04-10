@@ -1,20 +1,19 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import classes from "./Task.module.scss"
 import {getAbbreviated} from "../../../utils/UserUtils";
 import {getStatus} from "../../../utils/TaskUtils";
 import cx from "classnames"
 import ModalTask from "../modal/ModalTask";
-import {AuthContext} from "../../../context/AuthContext";
+import Priority from "../priority/Priority";
 
 const Task = ({task}) => {
-    // TODO: use priority (write a component)
     const {
         id,
         heading,
         status,
         responsible_id,
-        end_date
-        // priority
+        end_date,
+        priority
     } = task;
 
     const [resp, setResp] = useState("")
@@ -40,10 +39,19 @@ const Task = ({task}) => {
     },[end_date])
 
 
+    const getClasses = () => {
+        return (
+            statusString === "Выполнена" ?
+                cx(classes.task, classes.completed)
+                : isOverdue? cx(classes.task, classes.overdue)
+                    : classes.task
+        )
+    }
     return (
         <>
-            <div key={id} onClick={() => setActive(!active)} className={isOverdue? cx(classes.task, classes.overdue) : classes.task}>
+            <div key={id} onClick={() => setActive(!active)} className={getClasses()}>
                 <div className={classes.line}>
+                    <Priority priority={priority}/>
                     <p className={classes.heading}>{heading}</p>
                 </div>
                 <div className={classes.line}>

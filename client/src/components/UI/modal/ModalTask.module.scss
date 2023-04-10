@@ -18,8 +18,17 @@
     gap: 10px;
     width: 100%;
     display: flex;
-    align-items: flex-end;
     justify-content: space-between;
+    align-items: center;
+
+
+    &:has(> p) {
+      border-bottom: 1px solid rgba(#AF49FF, 0.7);
+    }
+    &:has(> article) {
+      border: none;
+      justify-content: center;
+    }
     span {
       width: auto;
       min-width: 120px;
@@ -29,9 +38,6 @@
 
   }
 
-  .row:has(> p) {
-    border-bottom: 1px solid rgba(#AF49FF, 0.7);
-  }
 
 }
 

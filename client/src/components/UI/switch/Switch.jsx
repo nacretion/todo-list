@@ -2,7 +2,6 @@ import React from 'react';
 import classes from "./Switch.module.scss"
 
 const Switch = ({options, selectedValue, setSelectedValue}) => {
-    console.log(selectedValue)
     return (
         <select className={classes.Switch} value={selectedValue} onChange={(e) => setSelectedValue(e.target.value)}>
             {options.map((option) =>

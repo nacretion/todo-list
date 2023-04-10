@@ -1,5 +1,5 @@
 import {Database} from "../database"
-import {TaskArrayType, TaskType, updFields} from "../Types/Task";
+import {TaskArrayType, TaskType} from "../Types/Task";
 
 
 export default class Task {
@@ -44,16 +44,15 @@ export default class Task {
         data: TaskType
     ) {
 
-        let endDate = new Date(data.endDate)
+        let endDate = new Date(new Date(data.endDate).getTime())
 
-        console.log(endDate.getTime())
+        console.log(endDate)
         const result = await Database.query(
             "INSERT INTO task (heading, description, end_date, priority, status, creator_id, responsible_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
             [data.heading, data.description, endDate, data.priority, data.status, data.creatorId, data.responsibleId]
         );
 
         if (result.rows[0]) {
-            // TODO: why do we need id ?
             const id =  result.rows[0].id
             const createDate =  result.rows[0].create_date
             const updDate =  result.rows[0].upd_date
@@ -70,10 +69,10 @@ export default class Task {
             const task = oldTask.rows[0] as TaskType;
             const newTask = { ...task, ...updTask} as TaskType;
 
-            const query =`UPDATE task SET heading = $1, description = $2, end_date = $3, priority = $4, status = $5, responsible_id = $6 WHERE id = $7 RETURNING *`
+            const query =`UPDATE task SET heading = $1, description = $2, end_date = $3, priority = $4, status = $5, responsible_id = $6, upd_date=$7 WHERE id = $8 RETURNING *`
 
 
-            const result = await Database.query(query, [newTask.heading, newTask.description, newTask.endDate, newTask.priority, newTask.status, newTask.responsibleId, updTask.id]);
+            const result = await Database.query(query, [newTask.heading, newTask.description, newTask.endDate, newTask.priority, newTask.status, newTask.responsibleId, new Date(Date.now()), updTask.id]);
 
             if (result.rows[0]) {
                 return result.rows[0] as TaskType;

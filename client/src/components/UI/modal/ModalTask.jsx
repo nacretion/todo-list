@@ -1,15 +1,14 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getAbbreviated} from "../../../utils/UserUtils";
 import Button from "../button/Button";
 import Modal from "./Modal";
 import classes from "./ModalTask.module.scss"
 import {getStatus} from "../../../utils/TaskUtils";
 import CreateTaskModal from "./createTaskModal";
-import {AuthContext} from "../../../context/AuthContext";
+import Priority from "../priority/Priority";
 
 const ModalTask = ({task, active, setActive}) => {
     const {
-        id,
         heading,
         description,
         status,
@@ -53,56 +52,59 @@ const ModalTask = ({task, active, setActive}) => {
     const [editMode, setEditMode] = useState(false)
 
     return (
-        !editMode?
-        <Modal active={active} sx={isOverdue ? {borderColor: "red"} : {}} setActive={setActive}>
-            <div className={classes.content}>
-                <div>
+        !editMode ?
+            <Modal active={active} sx={isOverdue ? {borderColor: "red"} : {}} setActive={setActive}>
+                <div className={classes.content}>
+                    <div>
+                        <div className={classes.line}>
+                            <p className={classes.heading} style={isOverdue ? {color: "red"} : {}}>{heading}</p>
+
+                            <p className={classes.description}>{description}</p>
+                        </div>
+
+                    </div>
                     <div className={classes.line}>
-                        <p className={classes.heading} style={isOverdue ? {color: "red"} : {}}>{heading}</p>
-
-                        <p className={classes.description}>{description}</p>
+                        <div className={classes.row}>
+                            <p>Создано</p>
+                            <p>{creator}</p>
+                        </div>
+                        <div className={classes.row}>
+                            <p>Ответственный</p>
+                            <p>{resp}</p>
+                        </div>
                     </div>
-
-                </div>
-                <div className={classes.line}>
-                    <div className={classes.row}>
-                        <p>Создано</p>
-                        <p>{creator}</p>
+                    <div className={classes.line}>
+                        <div className={classes.row}>
+                            <p>Создано</p>
+                            <p>{createDate}</p>
+                        </div>
+                        <div className={classes.row}>
+                            <p>Обновлено</p>
+                            <p>{updDate}</p>
+                        </div>
+                        <div className={classes.row} style={isOverdue ? {borderColor: "red"} : {}}>
+                            <p style={isOverdue ? {color: "red"} : {}}>Крайний срок</p>
+                            <p style={isOverdue ? {color: "red"} : {}}>{endDate}</p>
+                        </div>
                     </div>
-                    <div className={classes.row}>
-                        <p>Ответственный</p>
-                        <p>{resp}</p>
-                    </div>
-                </div>
-                <div className={classes.line}>
-                    <div className={classes.row}>
-                        <p>Создано</p>
-                        <p>{createDate}</p>
-                    </div>
-                    <div className={classes.row}>
-                        <p>Обновлено</p>
-                        <p>{updDate}</p>
-                    </div>
-                    <div className={classes.row} style={isOverdue ? {borderColor: "red"} : {}}>
-                        <p style={isOverdue ? {color: "red"} : {}}>Крайний срок</p>
-                        <p style={isOverdue ? {color: "red"} : {}}>{endDate}</p>
-                    </div>
-                </div>
-                <div className={classes.line}>
-                    <p className={classes.status} style={isOverdue ? {color: "red"} : {}}>{statusString}</p>
-                    <div className={classes.row}>
-                        {userId === creator_id ?
-                            <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
-                            :
-                            <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
-                        }
-                        <Button func={() => setActive(!active)}>Принять</Button>
+                    <div className={classes.line}>
+                        <div className={classes.row}>
+                            <Priority priority={priority}/>
+                            <p className={classes.status} style={isOverdue ? {color: "red"} : {}}>{statusString}</p>
+                        </div>
+                        <div className={classes.row}>
+                            {userId === creator_id ?
+                                <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
+                                :
+                                <Button func={() => setEditMode(!editMode)}>Редактировать</Button>
+                            }
+                            <Button func={() => setActive(!active)}>Принять</Button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </Modal>
+            </Modal>
             :
-            <CreateTaskModal editMode={editMode} setEditMode={setEditMode} task={task}/>
+            <CreateTaskModal active={editMode} setActive={setEditMode} task={task}/>
     )
 }
 

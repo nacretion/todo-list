@@ -3,25 +3,28 @@ import {getAbbreviated} from "../../../utils/UserUtils";
 import Button from "../button/Button";
 import Modal from "./Modal";
 import classes from "./ModalTask.module.scss"
-import {getStatus, updateTask} from "../../../utils/TaskUtils";
+import {updateTask} from "../../../utils/TaskUtils";
 import Input from "../input/Input";
 import TimeInput from "../input/timeInput";
 import Switch from "../switch/Switch";
 import {AuthContext} from "../../../context/AuthContext";
+import Priority from "../priority/Priority";
 
-const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
+const CreateTaskModal = ({task, active, setActive}) => {
 
     const [heading, setHeading] = useState("")
     const [description, setDescription] = useState("")
-    const [status, setStatus] = useState("")
+    const [status, setStatus] = useState(0)
     const [responsible, setResponsible] = useState("")
     const [creator, setCreator] = useState("")
     const [endDate, setEndDate] = useState(new Date(Date.now()))
-    const [priority, setPriority] = useState("")
+    const [priority, setPriority] = useState(0)
     const [createDate, setCreateDate] = useState()
 
     const {slaves} = useContext(AuthContext)
 
+    console.log(responsible)
+    console.log(createDate)
     const [slavesArray, setSlavesArray] = useState([])
     const [selectedSlave, setSelectedSlave] = useState(0)
 
@@ -34,7 +37,6 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
                 responsible_id,
                 creator_id,
                 create_date,
-                upd_date,
                 end_date,
                 priority
             } = task;
@@ -55,8 +57,12 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
                 setResponsible(name.name)
             )
         }
-    }, [])
-    const statusString = getStatus(status)
+    }, [task])
+
+    useEffect(() => {
+        getSlaves()
+    }, [slaves])
+
 
 
     const formatDate = () => {
@@ -65,6 +71,7 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
         const month = ('0' + (date.getMonth() + 1)).slice(-2);
         const day = ('0' + date.getDate()).slice(-2);
         return `${year}-${month}-${day}`
+
     }
     const formatTime = () => {
         const date = new Date(endDate);
@@ -77,41 +84,61 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
     const [updTime, setUpdTime] = useState(formatTime())
 
 
-    const getSlaves = () => {
-        let res = [];
-        slaves.map(async (slave) => {
-            const id = slave.subordinate_id
-            res.push({id: slaves.indexOf(slave), init_id: id, text: (await getAbbreviated(id)).name})
-        })
-        setSlavesArray(res)
-    }
+    const getSlaves = async () => {
+        const id = parseInt(localStorage.getItem("user_id"));
+        const slavePromises = slaves.map((slave) => getAbbreviated(slave.subordinate_id));
+        const slaveResults = await Promise.all(slavePromises);
+        const slaveArray = slaveResults.map((result, index) => ({
+            id: index,
+            init_id: slaves[index].subordinate_id,
+            text: result.name,
+        }));
+        setSlavesArray([{ id: slaves.length, init_id: id, text: "Текущий пользователь" }, ...slaveArray]);
+    };
 
-    const [updatedTask, setUpdatedTask] = useState()
 
     const collectUpdates = () => {
         const end_date = (new Date(fomattedDate + " " + updTime))
-        return {
-            id: task.id,
-            heading: heading,
-            description: description,
-            endDate: end_date,
-            priority: priority,
-            status: status,
-            responsibleId: slavesArray[selectedSlave].init_id
+        if (task) {
+            return {
+                id: task.id,
+                heading: heading,
+                description: description,
+                endDate: end_date,
+                priority: priority,
+                status: status,
+                responsibleId: slavesArray[selectedSlave].init_id
+            }
+        } else {
+            return {
+                creatorId: slaves[0].chief_id,
+                heading: heading,
+                description: description,
+                endDate: end_date,
+                priority: priority,
+                status: status,
+                responsibleId: slavesArray[selectedSlave].init_id
+            }
         }
     }
 
 
     const handleEdit = () => {
-        updateTask(collectUpdates()).then(r => {
-            if (r.id) {
-                window.location.reload()
-            }
-        })
+        console.log(collectUpdates())
+        if (heading && description && endDate && slavesArray[selectedSlave].init_id) {
+
+            updateTask(collectUpdates()).then(r => {
+                if (r) {
+                    window.location.reload()
+                }
+            })
+        } else {
+            alert("blank fields")
+        }
     }
 
     return (
-        <Modal active setActive={setActive}>
+        <Modal active={active} setActive={setActive}>
             <div className={classes.content}>
                 <div className={classes.line}>
                     <div className={classes.row}>
@@ -141,27 +168,30 @@ const CreateTaskModal = ({task, active, setActive, editMode, setEditMode}) => {
                     <div className={classes.row}>
                         <span>Крайний срок</span>
                     </div>
-                    <div style={{justifyContent: "flex-start"}} className={classes.row}>
+                    <div style={{justifyContent: "flex-start", alignItems: "flex-end"}} className={classes.row}>
                         <Input type={"date"} value={fomattedDate} setValue={setFormattedDate}></Input>
                         <TimeInput value={updTime} setValue={setUpdTime}/>
                     </div>
                 </div>
 
                 <div className={classes.line}>
-                    <Switch
-                        options={[
-                            {id: 0, text: 'К выполнению'},
-                            {id: 1, text: 'Выполняется'},
-                            {id: 2, text: 'Выполнена'},
-                            {id: 3, text: 'Отменена'},
-                        ]}
-                        selectedValue={status}
-                        setSelectedValue={setStatus}
-
-                    />
                     <div className={classes.row}>
-                        <Button func={()=> setEditMode(!editMode)}>Отменить</Button>
-                        <Button func={()=> handleEdit()}>Принять</Button>
+                        <Priority setPriority={setPriority} priority={priority}/>
+                        <Switch
+                            options={[
+                                {id: 0, text: 'К выполнению'},
+                                {id: 1, text: 'Выполняется'},
+                                {id: 2, text: 'Выполнена'},
+                                {id: 3, text: 'Отменена'},
+                            ]}
+                            selectedValue={status}
+                            setSelectedValue={setStatus}
+
+                        />
+                    </div>
+                    <div className={classes.row}>
+                        <Button func={() => setActive(!active)}>Отменить</Button>
+                        <Button func={() => handleEdit()}>Принять</Button>
                     </div>
                 </div>
             </div>

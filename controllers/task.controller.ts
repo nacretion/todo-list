@@ -55,9 +55,11 @@ export class TaskController {
     async updateTask(request: Request, result: Response) {
         try {
             const {task} = request.body
+            const updatedTask = task.id ?
+                await Task.updateTask(task)
+                : await Task.create(task)
 
-            console.log(task)
-            const updatedTask = await Task.updateTask(task)
+
 
             if (updatedTask) {
                 return result.status(200).json(updatedTask)

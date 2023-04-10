@@ -14,7 +14,8 @@
 .line {
   width: 100%;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 10px
 }
 
 .heading {
@@ -36,14 +37,18 @@
 }
 
 .completed {
+  border: 1px solid #0f0;
 
+  div p{
+    color: rgba(#0f0, 0.7);
+  }
 }
 
 
 .overdue {
-  border: 1px solid #FF0000;
+  border: 1px solid #f00;
   div p{
 
-    color: rgba(255, 0, 0, 0.7);
+    color: rgba(#f00, 0.7);
   }
 }
